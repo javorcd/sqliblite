@@ -1,5 +1,12 @@
-# SqLibLite - librería sqlite para android #
 
+[Twitter Bootstrap]:http://twitter.github.com/bootstrap/
+[keymaster.js]:https://github.com/madrobby/keymaster
+[jQuery]:http://jquery.com
+[@tjholowaychuk]:http://twitter.com/tjholowaychuk
+[express]:http://expressjs.com
+[AngularJS]:http://angularjs.org
+[Gulp]:http://gulpjs.co
+# SqLibLite - librería sqlite para android #
 
 ## Introducción ##
 
@@ -7,16 +14,12 @@ Esta librería añade funcionalidades prácticas a la api base de android SQLite
 
 Para comprender la facilidad de uso de esta librería vamos a compararla con la api de android SQLite mediante un ejemplo. Supongamos que queremos construir una sentencia SQL como la siguiente:
 
-```
-#!sql
-
+```sh
 SELECT cliente_id, cliente_nombre FROM clientes WHERE cliente_gasto > 1000
 ```
 Para ejecutar esta sentencia en la librería nativa de android tendríamos que hacer algo como lo siguiente:
 
-```
-#!java
-
+```sh
 String sql = android.database.sqlite.SQLiteQueryBuilder.buildQueryString(
 false, "clientes", new String[] {"cliente_id", "cliente_nombre"}, 
    "cliente_gasto > 10000", null, null, null, null);
@@ -26,9 +29,7 @@ Bastante complicado de comprender de un primer vistazo ya que se pasan muchos ar
 
 Vamos a ver como construiríamos esta misma sentencia usando esta librería:
 
-```
-#!java
-
+```sh
 String sql = new Select().select("cliente_id","cliente_nombre")
                 .from("clientes")
                 .where("cliente_gasto", Comparison.greater(1000)
@@ -41,24 +42,18 @@ Se ha realizado una aplicación de prueba con la que poder ver como funciona la 
 
 Se puede obtener clonando el repositorio:
 
-```
-#!git
-
+```sh
 git clone https://mincore@bitbucket.org/mincore/agenda-sqliblite.git
 ```
 
 Para instalarla en un dispositivo android se puede hacer lo siguiente:
 
-```
-#!gradle
-
+```sh
 ./gradlew installDebug
 ```
 Si tenemos un dispositivo conectado al ordenador al terminar veremos un mensaje como el siguiente informando que el proceso se ha realizado satisfactoriamente:
 
-```
-#!gradle
-
+```sh
 Installing APK 'app-debug.apk' on 'android - 4.3 - API 18 - 4.3'
 Installed on 1 device.
 ```
@@ -73,9 +68,7 @@ Tener las variables de entorno **ANDROID_HOME** y **JAVA_HOME** correctamente pu
 
 En caso de no tener la variable de entorno **ANDROID_HOME** podemos crear un archivo *local.properties* en la raíz del proyecto indicando la ruta al sdk de android:
 
-```
-#!bash
-
+```sh
 sdk.dir=/opt/android/android-sdk
 ```
 
@@ -85,27 +78,21 @@ Para usar esta librería en proyectos android seguiremos unos pasos muy sencillo
 
 Lo primero será clonar este repositorio, para ello podremos hacer algo como lo siguiente:
 
-```
-#!bash
-
+```sh
 mkdir sqliblite
 cd sqliblite
 git clone https://mincore@bitbucket.org/mincore/sqliblite.git
 ```
 Una vez realizado este paso tendremos que compilar el proyecto para generar un .jar. Lo haremos usando gradle. Estando en la raíz del proyecto haremos uso del comando:
 
-```
-#!groovy
-
+```sh
 ./gradlew clean build
 ```
 El siguiente paso es copiar el .jar generado en la carpeta outputs y pegarlo en la carpeta libs de nuestro nuevo proyecto de android.
 
 Para poder usarla tendremos que añadir al archivo **build.gradle** la siguiente linea:
 
-```
-#!groovy
-
+```sh
 compile files('libs/sqliblite.jar')
 ```
 Una vez realizado este paso ya estamos preparados para poder empezar a usar la librería en nuestros proyectos.
@@ -145,47 +132,35 @@ Dependiendo del tipo de operación que queramos realizar usaremos una u otra. Pa
 Usada para consultar datos de la base de datos. Vamos a ver ejemplos de uso, para ello escribiremos una consulta en SQL y veremos cual será el equivalente usando esta librería.
 
 **Ejemplo 1**
-```
-#!sql
-
+```sh
 SELECT * FROM clientes
 ```
 Escribiríamos:
 
-```
-#!java
-
+```sh
 String sql = new Select().select().from("clientes");
 ```
 
 **Ejemplo 2**
 
-```
-#!sql
-
+```sh
 SELECT nombre, apellido FROM clientes ORDER BY saldo ASC
 ```
 Escribiríamos:
 
-```
-#!java
-
+```sh
 String sql = new Select().select("nombre", "apellido")
                  .from("clientes").orderBy("saldo").asc();
 ```
 
 **Ejemplo 3**
 
-```
-#!sql
-
+```sh
 SELECT DISTINCT nombre FROM clientes WHERE saldo > 100 AND direccion = 'calle falsa'
 ```
 Escribiríamos:
 
-```
-#!java
-
+```sh
 String sql = new Select().selectDistinct("nombre").from("clientes")
                 .where("saldo", Comparison.greater(100))
                 .and("direccion", Comparison.equal("direccion false"))
@@ -193,31 +168,23 @@ String sql = new Select().selectDistinct("nombre").from("clientes")
 
 **Ejemplo 4**
 
-```
-#!sql
-
+```sh
 SELECT * FROM clientes CROSS JOIN reservas  
 ```
 Escribiríamos:
 
-```
-#!java
-
+```sh
 String sql = new Select().select().from("clientes").crossJoin("reservas")
 ```
 
 **Ejemplo 5**
 
-```
-#!sql
-
+```sh
 SELECT nombre, apellido FROM clientes INNER JOIN reservas USING(cliente_id)
 ```
 Escribiríamos:
 
-```
-#!java
-
+```sh
 String sql = new Select().select("nombre","apellido")
                  .from("clientes").innerJoin("reservas")
                  .using("cliente_id");
@@ -229,16 +196,12 @@ Esta clase genera consultas para persistir valores en la base de datos. Podemos 
 
 **Ejemplo 1**
 
-```
-#!sql
-
+```sh
 INSERT INTO clientes VALUES(1, "javier", "casanova", "calle falsa")
 ```
 Escribiríamos:
 
-```
-#!java
-
+```sh
 String sql = new Insert().insert("clientes")
                 .values(1, "javier", "casanova", "calle falsa")
 ```
@@ -249,34 +212,24 @@ Esta clase genera consultas que sirven para modificar valores existentes en la b
 
 **Ejemplo 1**
 
-```
-#!sql
-
+```sh
 UPDATE clientes SET nombre = 'javier', saldo = 1234 WHERE cliente_id = 1
 ```
 Escribiríamos:
 
-```
-#!java
-
+```sh
 String sql = new Update().update("clientes").set(
                   new Value("nombre", "javier"), new Value("saldo", 1234)
                      .where("cliente_id", Comparison.equal(1));
 ```
 
 **Ejemplo 2**
-
-
-```
-#!sql
-
+```sh
 UPDATE clientes SET saldo = 1244 WHERE nombre = 'javier'
 ```
 Escribiríamos:
 
-```
-#!java
-
+```sh
 String sql = new Update().update("clientes").set(
                new Value("saldo", 1244)).where(
                   "nombre",Comparison.equal("javier")
@@ -288,48 +241,34 @@ Genera consultas para borrar registros de la base de datos. Algunos ejemplos:
 
 **Ejemplo 1**
 
-```
-#!sql
-
+```sh
 DELETE FROM clientes
 ```
 Escribiríamos:
 
-
-```
-#!java
-
+```sh
 String sql = new Delete().delete("clientes")
 ```
 
 **Ejemplo 2**
-
-```
-#!sql
-
+```sh
 DELETE FROM clientes WHERE cliente_id = 10
 ```
 Escribiríamos:
 
-```
-#!java
-
+```sh
 String sql = new Delete().delete("clientes").where("cliente_id", 
                    Comparison.equal(10))
 ```
 
 **Ejemplo 3**
 
-```
-#!sql
-
+```sh
 DELETE FROM clientes WHERE nombre = 'javier' AND saldo > 1000
 ```
 Escribiríamos:
 
-```
-#!java
-
+```sh
 String sql = new Delete().delete("clientes")
                 .where("nombre",Comparison.equal("nombre"))
                 .and("saldo", Comparison.greater(1000))
@@ -338,16 +277,11 @@ String sql = new Delete().delete("clientes")
 
 La librería soporta la creación de consultas complejas usando los diferentes JOINs y UNION que sqlite proporciona, pero cada subconsulta ha de ser creada por separado de la principal, por ejemplo si queremos realizar la siguiente consulta:
 
-```
-#!sql
-
+```sh
 SELECT DISTINCT nombre FROM clientes WHERE EXISTS (SELECT id FROM pedidos WHERE cliente_id = 10)
 ```
 tendremos que hacer algo equivalente en la librería:
-
-```
-#!java
-
+```sh
 // child query
 String exists = new Select().select("id").from("pedidos").where("cliente_id", Comparison.equal(10))
 
@@ -361,10 +295,7 @@ Ahora podemos ejecutar la consulta de forma correcta.
 Para crear una nueva tabla usaremos la clase CreateTable. Para cada nueva columna tendremos que especificar una serie de valores, como son el tipo de valor (representado por la clase **Type**) y otro parámetro opcional que indica la restricción del campo, representado por la clase **Constraint**.
 
 Ejemplo de creación de una tabla:
-
-```
-#!java
-
+```sh
 String sql = CreateTable.name("clientes").colums(
        Colum.value("id", Type.INTEGER, Constraint.PRIMARY_KEY_AUTOINCREMENT),
        Colum.value("nombre", Type.VARCHAR, Constraint.NOT_NULL),
@@ -374,9 +305,7 @@ String sql = CreateTable.name("clientes").colums(
 
 Para borrar una tabla se usa la clase DropTable. Su uso es muy sencillo:
 
-```
-#!java
-
+```sh
 String sql = DropTable.drop("clientes")
 ```
 
@@ -384,9 +313,7 @@ String sql = DropTable.drop("clientes")
 
 Para crear una base de datos hay que crear una subclase de **AbstractDatabase** e implementar los métodos abstractos.
 
-```
-#!java
-
+```sh
 public BDEjemplo extends AbstractDatabase {
 
     private static final String NOMBRE_BD = "ejemplo_db";
@@ -419,16 +346,12 @@ public BDEjemplo extends AbstractDatabase {
 ```
 Ahora tendremos que crear la clase que realizará las operaciones sobre la base de datos que hemos creado. Para ello primero se crea una nueva instancia de la base de datos:
 
-```
-#!java
-
+```sh
 final BDEjemplo bd = new BDEjemplo(getapplicationContext());
 ```
 Creamos una instancia de **DataOperation** y le pasamos la base de datos sobre la que se van a realizar las operaciones:
 
-```
-#!java
-
+```sh
 final DataOperation operations = new DataOperation(bd);
 ```
 Con esto ya podremos realizar operaciones sobre nuestra base de datos.
@@ -437,9 +360,7 @@ Con esto ya podremos realizar operaciones sobre nuestra base de datos.
 
 Creamos una consulta y la ejecutamos:
 
-```
-#!java
-
+```sh
 String sql = new Insert().insert("clientes")
                 .values(1, "javier", "casanova", "calle falsa").buildStatement();
 
@@ -452,9 +373,7 @@ Devuelve el id que se ha insertado en la base de datos.
 ### Eliminar registros ###
 
 Creamos una consulta que va a eliminar todos los clientes cuyo nombre sea javier.
-```
-#!java
-
+```sh
 String sql = new Delete().delete("clientes").where("nombre", Comparison.equal("javier"))
                   .buildStatement();
 
@@ -468,9 +387,7 @@ Devuelve el numero de filas eliminadas en la base de datos.
 
 Creamos una consulta que modifica el saldo de los clientes que vivan en ferrol:
 
-```
-#!java
-
+```sh
 String sql = new Update().update("clientes").set(new Value("saldo", Comparison.equal(1000)))
                 .where("ciudad", Comparison.equal("ferrol")).buildStatement();
 
@@ -486,9 +403,7 @@ Consultar datos en la base de datos es algo diferente al resto de operaciones, y
 
 Para ello la librería ofrece una interfaz genérica llamada **EntityMapper** que es la encargada de recibir un objeto de tipo Cursor y convertirlo a nuestro tipo de datos. Por ejemplo, tenemos una entidad del tipo:
 
-```
-#!java
-
+```sh
 public Cliente {
    
    private String id;
@@ -499,9 +414,7 @@ public Cliente {
 ```
 Para crear un mapeador de elementos tipo Cliente haremos algo como lo siguiente:
 
-```
-#!java
-
+```sh
 class MapeadorCliente implements EntityMapper<Cliente> {
 
     @Override
@@ -515,9 +428,7 @@ class MapeadorCliente implements EntityMapper<Cliente> {
 ```
 Una vez entendido esto, vamos a ver como realizaríamos una consulta para ver todos los clientes de la base de datos:
 
-```
-#!java
-
+```sh
 String sql = new Select().select().from("clientes").buildStatement();
 
 // Ejecutamos la consulta
@@ -532,30 +443,21 @@ Dentro de la librería existe una carpeta para los test unitarios con varios eje
 
 Para ejecutar los test unitarios del proyecto ejecuta lo siguiente en el directorio raíz del proyecto:
 
-```
-#!gradle
-
+```sh
 ./gradlew clean sqliblite:test
 ```
-
 Cuando el proceso termine, podemos consultar el resultado de los test en una página html que se encuentra en el directorio:
 
-```
-#!gradle
-
+```sh
 build/reports/tests/unitTestDebug/index.html
 ```
 Para ver la cobertura de código habrá que ejecutar la siguiente tarea en el directorio raíz del proyecto:
 
-```
-#!gradle
-
+```sh
 ./gradlew clean jacocoTestReport
 ```
 Esta tarea creará un informe en html en la siguiente ruta:
 
-```
-#!gradle
-
+```sh
 build/reports/jacoco/jacocoTestReport/html/index.html
 ```
