@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/sqliblite.iml" filepath="$PROJECT_DIR$/sqliblite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sqliblite/sqliblite-sqliblite.iml" filepath="$PROJECT_DIR$/sqliblite/sqliblite-sqliblite.iml" />
+    </modules>
+  </component>
+</project>

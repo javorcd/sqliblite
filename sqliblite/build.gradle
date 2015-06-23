@@ -1,0 +1,79 @@
+apply plugin: 'com.android.library'
+apply plugin: 'jacoco'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+    lintOptions{
+        abortOnError false
+    }
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            debuggable true
+            testCoverageEnabled true
+        }
+        release {
+            minifyEnabled false
+            testCoverageEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        unitTest
+    }
+    sourceSets {
+        unitTest {
+            java {
+                srcDir 'src/test/java'
+            }
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    unitTestCompile 'junit:junit:4.12'
+}
+
+jacoco {
+    toolVersion = "0.7.1.201405082137"
+}
+
+def coverageSourceDirs = [
+        '../sqliblite/src/main'
+]
+
+task jacocoTestReport(type: JacocoReport, dependsOn: "test") {
+    group = "Reporting"
+
+    description = "Generate Jacoco coverage reports"
+
+    classDirectories = fileTree(
+            dir: '../sqliblite/build/intermediates/classes',
+            excludes: ['**/R.class',
+                       '**/R$*.class',
+                       '**/*$ViewInjector*.*',
+                       '**/BuildConfig.*',
+                       '**/Manifest*.*']
+    )
+
+    additionalSourceDirs = files(coverageSourceDirs)
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = files('../sqliblite/build/jacoco/testUnitTestDebug.exec')
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
