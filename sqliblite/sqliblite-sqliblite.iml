@@ -12,10 +12,12 @@
         <option name="SELECTED_TEST_ARTIFACT" value="_android_test_" />
         <option name="ASSEMBLE_TASK_NAME" value="assembleUnitTestDebug" />
         <option name="COMPILE_JAVA_TASK_NAME" value="compileUnitTestDebugSources" />
-        <option name="SOURCE_GEN_TASK_NAME" value="generateUnitTestDebugSources" />
         <option name="ASSEMBLE_TEST_TASK_NAME" value="assembleUnitTestDebugAndroidTest" />
         <option name="COMPILE_JAVA_TEST_TASK_NAME" value="compileUnitTestDebugAndroidTestSources" />
-        <option name="TEST_SOURCE_GEN_TASK_NAME" value="generateUnitTestDebugAndroidTestSources" />
+        <afterSyncTasks>
+          <task>generateUnitTestDebugAndroidTestSources</task>
+          <task>generateUnitTestDebugSources</task>
+        </afterSyncTasks>
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
         <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
         <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
@@ -25,7 +27,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/build/intermediates/classes/unitTest/debug" />
     <output-test url="file://$MODULE_DIR$/build/intermediates/classes/androidTest/unitTest/debug" />
     <exclude-output />

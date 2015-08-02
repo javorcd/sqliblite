@@ -6,106 +6,100 @@
 [express]:http://expressjs.com
 [AngularJS]:http://angularjs.org
 [Gulp]:http://gulpjs.co
-# SqLibLite - librería sqlite para android #
+# SqLibLite - sqlite library for android #
 
-## Introducción ##
+## Introduction ##
 
-Esta librería añade funcionalidades prácticas a la api base de android SQLite. Ofrece numerosas clases y métodos que nos ayudan a crear sentencias SQL de una forma simple, legible y segura.
+This library adds functionality to the base android api SQLite. Offers numerous classes and methods that help us to create SQL statements in a simple, readable and safely manner.
 
-Para comprender la facilidad de uso de esta librería vamos a compararla con la api de android SQLite mediante un ejemplo. Supongamos que queremos construir una sentencia SQL como la siguiente:
+To understand the usability of this library we will compare it with android SQLite API by example. Suppose we want to build a SQL statement like the following:
 
 ```sh
-SELECT cliente_id, cliente_nombre FROM clientes WHERE cliente_gasto > 1000
+SELECT customer_id, customer_name FROM customers WHERE customer_spending > 1000
 ```
-Para ejecutar esta sentencia en la librería nativa de android tendríamos que hacer algo como lo siguiente:
+To execute this sentence in the native android library should do something like the following:
 
 ```sh
 String sql = android.database.sqlite.SQLiteQueryBuilder.buildQueryString(
-false, "clientes", new String[] {"cliente_id", "cliente_nombre"}, 
-   "cliente_gasto > 10000", null, null, null, null);
+false, "customers", new String[] {"customer_id", "customer_name"},
+   "customer_spending > 10000", null, null, null, null);
 ```
 
-Bastante complicado de comprender de un primer vistazo ya que se pasan muchos argumentos y necesitamos estar atentos para no confundirnos, a lo que se suma también la complejidad de mantenerlo en un desarrollo.
-
-Vamos a ver como construiríamos esta misma sentencia usando esta librería:
+Very difficult to understand at the first time , since many arguments are passed and we have to be careful not to confuse . Keep it in development increases the complexity
+Let's see how we would use this library:
 
 ```sh
-String sql = new Select().select("cliente_id","cliente_nombre")
-                .from("clientes")
-                .where("cliente_gasto", Comparison.greater(1000)
+String sql = new Select().select("customer_id","customer_name")
+                .from("customers")
+                .where("customer_spending", Comparison.greater(1000)
 ```
-Como ves, es mucho mas legible y semántico. Con este sencillo ejemplo podemos ver la potencia y facilidad de uso de esta librería.
+As you see, it is much more readable and semantic. With this simple example we can see the power and ease of use of this library.
 
-## Aplicación de prueba ##
+## Test app ##
 
-Se ha realizado una aplicación de prueba con la que poder ver como funciona la librería. 
-
-Se puede obtener clonando el repositorio:
+A test application with which to see how the library works.
 
 ```sh
 git clone https://mincore@bitbucket.org/mincore/agenda-sqliblite.git
 ```
 
-Para instalarla en un dispositivo android se puede hacer lo siguiente:
+To install in an android device can do the following:
 
 ```sh
 ./gradlew installDebug
 ```
-Si tenemos un dispositivo conectado al ordenador al terminar veremos un mensaje como el siguiente informando que el proceso se ha realizado satisfactoriamente:
+The result will be something like the following:
 
 ```sh
 Installing APK 'app-debug.apk' on 'android - 4.3 - API 18 - 4.3'
 Installed on 1 device.
 ```
 
-## Como integrarla ##
+## Integration ##
 
-**Requisitos antes de integrar**
+**Prerequisites**
 
-El target api debe ser >= 15.
+Target API >= 15.
 
-Tener las variables de entorno **ANDROID_HOME** y **JAVA_HOME** correctamente puestas en el sistema.
+Environment variables **ANDROID_HOME** and **JAVA_HOME**.
 
-En caso de no tener la variable de entorno **ANDROID_HOME** podemos crear un archivo *local.properties* en la raíz del proyecto indicando la ruta al sdk de android:
+We can create *local.properties* in the project root indicating the path to the Android SDK:
 
 ```sh
 sdk.dir=/opt/android/android-sdk
 ```
 
-**Compilar**
+**Compilation**
 
-Para usar esta librería en proyectos android seguiremos unos pasos muy sencillos:
+To use this library in android projects follow a few simple steps:
 
-Lo primero será clonar este repositorio, para ello podremos hacer algo como lo siguiente:
+Clone this repository:
 
 ```sh
 mkdir sqliblite
 cd sqliblite
-git clone https://mincore@bitbucket.org/mincore/sqliblite.git
+git clone https://github.com/javorcd/sqliblite.git
 ```
-Una vez realizado este paso tendremos que compilar el proyecto para generar un .jar. Lo haremos usando gradle. Estando en la raíz del proyecto haremos uso del comando:
+Compile the library:
 
 ```sh
 ./gradlew clean build
 ```
-El siguiente paso es copiar el .jar generado en la carpeta outputs y pegarlo en la carpeta libs de nuestro nuevo proyecto de android.
+Copy the generated .jar to a libs project folder
 
-Para poder usarla tendremos que añadir al archivo **build.gradle** la siguiente linea:
+Add to the **build.gradle** the following line:
 
 ```sh
 compile files('libs/sqliblite.jar')
 ```
-Una vez realizado este paso ya estamos preparados para poder empezar a usar la librería en nuestros proyectos.
 
-## Estructura general ##
+## General structure ##
 
-La librería se divide de forma general en:
+The library is divided generally in:
 
 **DML (data manipulation language)**
 
-Permite llevar a cabo operaciones de inserción, consulta, borrado y modificación de los datos que contiene una base de datos relacional usando el lenguaje SQL.
-
-Dentro de esta librería encontramos cuatro clases fundamentales para poder realizar estas operaciones:
+Within this library are four basic classes to perform these operations:
 
 * Select
 * Insert
@@ -114,212 +108,213 @@ Dentro de esta librería encontramos cuatro clases fundamentales para poder real
 
 **DDL (data definition language)**
 
-Permite definir estructuras de datos. Actualmente en la librería solo hay implementadas dos clases para realizar este tipo de operaciones. Estas son:
+It allows you to define data structures.
 
 * CreateTable
 * DropTable
 
-Este conjunto de clases serán las que usaremos para crear nuestras sentencias SQL.
+This set of classes will be those that we use to create our SQL statements
 
-También se incluyen clases y métodos para generar consultas más complejas usando funciones de agregación y operadores lógicos. Se verán en detalle mas adelante.
+## Generate queries ##
 
-## Como usarla para generar consultas ##
+Depending on the type of operation you want to perform will use one or the other. To begin we start seeing how to use the Select class.
 
-Dependiendo del tipo de operación que queramos realizar usaremos una u otra. Para comenzar empezaremos viendo como usar la clase Select.
+### Select ###
 
-### Clase Select ###
+Used to query data from the database. We'll see examples of use, for this purpose we write a query in SQL and see which is the equivalent of using this library.
 
-Usada para consultar datos de la base de datos. Vamos a ver ejemplos de uso, para ello escribiremos una consulta en SQL y veremos cual será el equivalente usando esta librería.
-
-**Ejemplo 1**
+**Example 1**
 ```sh
-SELECT * FROM clientes
+SELECT * FROM customers
 ```
-Escribiríamos:
+We would write:
 
 ```sh
-String sql = new Select().select().from("clientes");
+String sql = new Select().select().from("customers");
 ```
 
-**Ejemplo 2**
+**Example 2**
 
 ```sh
-SELECT nombre, apellido FROM clientes ORDER BY saldo ASC
+SELECT name, lastname FROM customers ORDER BY balance ASC
 ```
-Escribiríamos:
+We would write::
 
 ```sh
-String sql = new Select().select("nombre", "apellido")
-                 .from("clientes").orderBy("saldo").asc();
-```
-
-**Ejemplo 3**
-
-```sh
-SELECT DISTINCT nombre FROM clientes WHERE saldo > 100 AND direccion = 'calle falsa'
-```
-Escribiríamos:
-
-```sh
-String sql = new Select().selectDistinct("nombre").from("clientes")
-                .where("saldo", Comparison.greater(100))
-                .and("direccion", Comparison.equal("direccion false"))
+String sql = new Select().select("name", "lastname")
+                 .from("customers").orderBy("balance").asc();
 ```
 
-**Ejemplo 4**
+**Example 3**
 
 ```sh
-SELECT * FROM clientes CROSS JOIN reservas  
+SELECT DISTINCT name FROM customers WHERE balance > 100 AND direction = 'calle falsa'
 ```
-Escribiríamos:
+We would write:
 
 ```sh
-String sql = new Select().select().from("clientes").crossJoin("reservas")
-```
-
-**Ejemplo 5**
-
-```sh
-SELECT nombre, apellido FROM clientes INNER JOIN reservas USING(cliente_id)
-```
-Escribiríamos:
-
-```sh
-String sql = new Select().select("nombre","apellido")
-                 .from("clientes").innerJoin("reservas")
-                 .using("cliente_id");
+String sql = new Select().selectDistinct("name").from("customers")
+                .where("balance", Comparison.greater(100))
+                .and("direction", Comparison.equal("direccion false"))
 ```
 
-### Clase Insert ###
-
-Esta clase genera consultas para persistir valores en la base de datos. Podemos ver casos de uso en los siguientes ejemplos:
-
-**Ejemplo 1**
+**Example 4**
 
 ```sh
-INSERT INTO clientes VALUES(1, "javier", "casanova", "calle falsa")
+SELECT * FROM customers CROSS JOIN reserves
 ```
-Escribiríamos:
+We would write:
 
 ```sh
-String sql = new Insert().insert("clientes")
-                .values(1, "javier", "casanova", "calle falsa")
+String sql = new Select().select().from("customers").crossJoin("reserves")
 ```
 
-### Clase Update ###
-
-Esta clase genera consultas que sirven para modificar valores existentes en la base de datos. Vamos a ver unos ejemplos:
-
-**Ejemplo 1**
+**Example 5**
 
 ```sh
-UPDATE clientes SET nombre = 'javier', saldo = 1234 WHERE cliente_id = 1
+SELECT name, lastname FROM customers INNER JOIN reserves USING(customer_id)
 ```
-Escribiríamos:
+We would write:
 
 ```sh
-String sql = new Update().update("clientes").set(
-                  new Value("nombre", "javier"), new Value("saldo", 1234)
-                     .where("cliente_id", Comparison.equal(1));
+String sql = new Select().select("name","lastname")
+                 .from("customers").innerJoin("reserves")
+                 .using("customer_id");
 ```
 
-**Ejemplo 2**
+### Insert ###
+
+This class generates queries to persist values ​​in the database. We can see cases of use in the following examples:
+
+**Example 1**
+
 ```sh
-UPDATE clientes SET saldo = 1244 WHERE nombre = 'javier'
+INSERT INTO customers VALUES(1, "javier", "martinez", "calle falsa")
 ```
-Escribiríamos:
+We would write:
 
 ```sh
-String sql = new Update().update("clientes").set(
-               new Value("saldo", 1244)).where(
-                  "nombre",Comparison.equal("javier")
-```
-
-### Clase Delete ###
-
-Genera consultas para borrar registros de la base de datos. Algunos ejemplos:
-
-**Ejemplo 1**
-
-```sh
-DELETE FROM clientes
-```
-Escribiríamos:
-
-```sh
-String sql = new Delete().delete("clientes")
+String sql = new Insert().insert("customers")
+                .values(1, "javier", "martinez", "calle falsa")
 ```
 
-**Ejemplo 2**
-```sh
-DELETE FROM clientes WHERE cliente_id = 10
-```
-Escribiríamos:
+### Update ###
+
+This class generates queries that are used to modify existing values ​​in the database. Let's see some examples:
+
+**Example 1**
 
 ```sh
-String sql = new Delete().delete("clientes").where("cliente_id", 
+UPDATE customers SET name = 'javier', balance = 1234 WHERE customer_id = 1
+```
+We would write:
+
+```sh
+String sql = new Update().update("customers").set(
+                  new Value("name", "javier"), new Value("balance", 1234)
+                     .where("customer_id", Comparison.equal(1));
+```
+
+**Example 2**
+
+```sh
+UPDATE customers SET balance = 1244 WHERE name = 'javier'
+```
+We would write:
+
+```sh
+String sql = new Update().update("customers").set(
+               new Value("balance", 1244)).where(
+                  "name", Comparison.equal("javier")
+```
+
+### Delete ###
+
+Generates queries to delete rows from the database. Some examples:
+
+**Example 1**
+
+```sh
+DELETE FROM customers
+```
+We would write:
+
+```sh
+String sql = new Delete().delete("customers")
+```
+
+**Example 2**
+
+```sh
+DELETE FROM customers WHERE customer_id = 10
+```
+We would write:
+
+```sh
+String sql = new Delete().delete("customers").where("customer_id",
                    Comparison.equal(10))
 ```
 
-**Ejemplo 3**
+**Example 3**
 
 ```sh
-DELETE FROM clientes WHERE nombre = 'javier' AND saldo > 1000
+DELETE FROM customers WHERE name = 'javier' AND balance > 1000
 ```
-Escribiríamos:
+We would write:
 
 ```sh
-String sql = new Delete().delete("clientes")
-                .where("nombre",Comparison.equal("nombre"))
-                .and("saldo", Comparison.greater(1000))
+String sql = new Delete().delete("customers")
+                .where("name",Comparison.equal("javier"))
+                .and("balance", Comparison.greater(1000))
 ```
-## Consultas complejas ##
+## Complex queries ##
 
-La librería soporta la creación de consultas complejas usando los diferentes JOINs y UNION que sqlite proporciona, pero cada subconsulta ha de ser creada por separado de la principal, por ejemplo si queremos realizar la siguiente consulta:
+The library supports the creation of complex queries using different joins and UNION that SQLite provides, but each subquery must be created separately from the principal, for example if we make the following query:
 
 ```sh
-SELECT DISTINCT nombre FROM clientes WHERE EXISTS (SELECT id FROM pedidos WHERE cliente_id = 10)
+SELECT DISTINCT name FROM customers WHERE EXISTS (SELECT id FROM orders WHERE customer_id = 10)
 ```
-tendremos que hacer algo equivalente en la librería:
+we have to do something like this:
+
 ```sh
 // child query
-String exists = new Select().select("id").from("pedidos").where("cliente_id", Comparison.equal(10))
+String exists = new Select().select("id").from("orders").where("customer_id", Comparison.equal(10))
 
 // master query
-String sql = new Select().selectDistinct("nombre").from("clientes").where().exists(exists)
+String sql = new Select().selectDistinct("name").from("customers").where().exists(exists)
 ```
-Ahora podemos ejecutar la consulta de forma correcta.
+Now we can execute the query correctly.
 
-## Crear tablas y borrarlas ##
+## Create and delete tables ##
 
-Para crear una nueva tabla usaremos la clase CreateTable. Para cada nueva columna tendremos que especificar una serie de valores, como son el tipo de valor (representado por la clase **Type**) y otro parámetro opcional que indica la restricción del campo, representado por la clase **Constraint**.
+To create a new table will use the CreateTable class. For each new column have to specify a set of values, such as the type of value (represented by the **Type** class) and one optional parameter indicating the restriction of the field, represented by the class **Constraint** .
 
-Ejemplo de creación de una tabla:
+Example of table creation:
+
 ```sh
-String sql = CreateTable.name("clientes").colums(
+String sql = CreateTable.name("customers").colums(
        Colum.value("id", Type.INTEGER, Constraint.PRIMARY_KEY_AUTOINCREMENT),
-       Colum.value("nombre", Type.VARCHAR, Constraint.NOT_NULL),
-       Colum.value("direccion", Type.VARCHAR, Constraint.NULL),
-       Colum.value("telefono", Type.VARCHAR)));
+       Colum.value("name", Type.VARCHAR, Constraint.NOT_NULL),
+       Colum.value("direction", Type.VARCHAR, Constraint.NULL),
+       Colum.value("tlf", Type.VARCHAR)));
 ```
-
-Para borrar una tabla se usa la clase DropTable. Su uso es muy sencillo:
+To delete a table the DropTable class is used. It's use is very simple:
 
 ```sh
-String sql = DropTable.drop("clientes")
+String sql = DropTable.drop("customers")
 ```
 
-## Crear la base de datos ##
+## Create the database ##
 
-Para crear una base de datos hay que crear una subclase de **AbstractDatabase** e implementar los métodos abstractos.
+To create a database you must create a subclass of **AbstractDatabase** and implement the abstract methods .
 
 ```sh
-public BDEjemplo extends AbstractDatabase {
+public BDExample extends AbstractDatabase {
 
-    private static final String NOMBRE_BD = "ejemplo_db";
+    private static final String NAME_BD = "ejemplo_db";
     private static final int VERSION_BD = 1;
 
-    public BDEjemplo(Context cxt) {
+    public BDExample(Context cxt) {
         super(ctx);
     }
 
@@ -335,128 +330,123 @@ public BDEjemplo extends AbstractDatabase {
 
     @Override
     protected void executeCreate(SQLiteDatabase database) {
-        // Crear tablas
+        // create
     }
 
     @Override
     protected void executeUpgrade(SQLiteDatabase database, int oldVer, int newVer) {
-       // actualizar
+       // update
     }
 }
 ```
-Ahora tendremos que crear la clase que realizará las operaciones sobre la base de datos que hemos creado. Para ello primero se crea una nueva instancia de la base de datos:
+Now we have to create the class that will perform operations on the database. For this first a new instance of the database is created:
 
 ```sh
-final BDEjemplo bd = new BDEjemplo(getapplicationContext());
+final BDExample bd = new BDExample(getapplicationContext());
 ```
-Creamos una instancia de **DataOperation** y le pasamos la base de datos sobre la que se van a realizar las operaciones:
 
 ```sh
 final DataOperation operations = new DataOperation(bd);
 ```
-Con esto ya podremos realizar operaciones sobre nuestra base de datos.
+With this we can now perform operations on our database.
 
-### Insertar valores ###
+### Insert values ###
 
-Creamos una consulta y la ejecutamos:
 
 ```sh
-String sql = new Insert().insert("clientes")
+String sql = new Insert().insert("customers")
                 .values(1, "javier", "casanova", "calle falsa").buildStatement();
 
-// ejecutamos la query
+// execute the query
 
 long id = operations.insert(sql);
 ```
-Devuelve el id que se ha insertado en la base de datos.
+Returns the id that has been inserted into the database.
 
-### Eliminar registros ###
+### Delete values ###
 
-Creamos una consulta que va a eliminar todos los clientes cuyo nombre sea javier.
 ```sh
-String sql = new Delete().delete("clientes").where("nombre", Comparison.equal("javier"))
+String sql = new Delete().delete("customers").where("name", Comparison.equal("javier"))
                   .buildStatement();
 
-// ejecutamos la consulta
+// execute the query
 
-int eliminados = operations.delete(sql);
+int deleted = operations.delete(sql);
 ```
-Devuelve el numero de filas eliminadas en la base de datos.
+Returns the number of rows deleted in the database.
 
-### Modificar valores ###
-
-Creamos una consulta que modifica el saldo de los clientes que vivan en ferrol:
+### Update Values ###
 
 ```sh
-String sql = new Update().update("clientes").set(new Value("saldo", Comparison.equal(1000)))
-                .where("ciudad", Comparison.equal("ferrol")).buildStatement();
+String sql = new Update().update("customers").set(new Value("balance", Comparison.equal(1000)))
+                .where("city", Comparison.equal("ferrol")).buildStatement();
 
-// se ejecuta la consulta
+// execute the query
 
-int actualizados = operations.update(sql);
+int updated = operations.update(sql);
 ```
-Devuelve el numero de filas actualizadas.
+Returns the number of updated rows.
 
-### Seleccionar datos ###
+### Select data ###
 
-Consultar datos en la base de datos es algo diferente al resto de operaciones, ya que necesitamos construir una nueva entidad a partir de los datos devueltos. Por ejemplo, si queremos consultar los clientes que tenemos en nuestra base de datos tenemos que "decirle" a la librería cómo queremos que mapee los elementos devueltos.
+Consult data in the database is somewhat different from other operations, and we need to build a new entity from the returned data. For example, if we consult the clients we have in our database we have to "tell" how we want the library that maps the returned items.
 
-Para ello la librería ofrece una interfaz genérica llamada **EntityMapper** que es la encargada de recibir un objeto de tipo Cursor y convertirlo a nuestro tipo de datos. Por ejemplo, tenemos una entidad del tipo:
+To do this the libray provides a generic interface called **EntityMapper** that is responsible for receiving an object of type Cursor and make our data type. For example, if you have an entity type:
 
 ```sh
-public Cliente {
+public Client {
    
    private String id;
-   private String nombre;
+   private String name;
 
    // Se omiten getters y setter por brevedad
 }
 ```
-Para crear un mapeador de elementos tipo Cliente haremos algo como lo siguiente:
+To create a Client type mapper elements do something like the following:
 
 ```sh
-class MapeadorCliente implements EntityMapper<Cliente> {
+class ClientMapper implements EntityMapper<Client> {
 
     @Override
-    public Persona mapEntity(Cursor cursor) {
-        Cliente cliente = new Cliente();
+    public Client mapEntity(Cursor cursor) {
+        Client client = new Client();
         cliente.setId(cursor.getInt(cursor.getColumnIndex("id")));
-        cliente.setNombre(cursor.getInt(cursor.getColumnIndex("nombre")));
-        return cliente;
+        cliente.setName(cursor.getInt(cursor.getColumnIndex("name")));
+        return client;
     }
 }
 ```
-Una vez entendido esto, vamos a ver como realizaríamos una consulta para ver todos los clientes de la base de datos:
+Once this is understood, we will see how to retrieve all customers in the database:
 
 ```sh
-String sql = new Select().select().from("clientes").buildStatement();
+String sql = new Select().select().from("customers").buildStatement();
 
-// Ejecutamos la consulta
+// Execute the query
 
-List<Cliente> clientes = operations.get(sql, new MapeadorCliente());
+List<Client> clients = operations.get(sql, new ClientMapper());
 ```
-Devuelve una lista con los clientes que hay en la base de datos.
+Returns a list of clients that are in the database.
 
-## Test unitarios y cobertura de código ##
+## Unit test and code coverage ##
 
-Dentro de la librería existe una carpeta para los test unitarios con varios ejemplos de creación de consultas. El framework usado es junit version 4.12. Para la cobertura de código se ha usado jacoco y se ha creado una tarea para ejecutar con gradle.
+Inside the library there is a folder for unit testing with several examples of creating queries. The framework used is JUnit version 4.12. For code coverage has been used jacoco and created a task to run with Gradle.
 
-Para ejecutar los test unitarios del proyecto ejecuta lo siguiente en el directorio raíz del proyecto:
+To run the unit test project run the following in the root directory of the project:
 
 ```sh
 ./gradlew clean sqliblite:test
 ```
-Cuando el proceso termine, podemos consultar el resultado de los test en una página html que se encuentra en el directorio:
+When the process is complete, we can see the result of the test in an HTML page found in the directory:
 
 ```sh
 build/reports/tests/unitTestDebug/index.html
 ```
-Para ver la cobertura de código habrá que ejecutar la siguiente tarea en el directorio raíz del proyecto:
+To see code coverage should be run the next task in the project root directory:
 
 ```sh
 ./gradlew clean jacocoTestReport
 ```
-Esta tarea creará un informe en html en la siguiente ruta:
+This task will create a report in HTML at the following path:
 
 ```sh
 build/reports/jacoco/jacocoTestReport/html/index.html
